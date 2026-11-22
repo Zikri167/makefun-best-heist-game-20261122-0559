@@ -60,6 +60,10 @@ function stageSneak(state) {
   guard.state = 'stare';
   guard.suspicion = 42;
   aimGuardAt(guard, thiefAt.x, thiefAt.y);
+  // The lure that bought the hiding spot: a coin still ringing on the
+  // floor beyond the curtain, pulling the guard's attention away.
+  const coinAt = place(state, 11, 10);
+  state.coins.push({ x: coinAt.x, y: coinAt.y, timer: 3 });
   const guard2 = state.guards[1];
   const guard2At = place(state, 24, 7);
   guard2.x = guard2At.x;
@@ -128,7 +132,40 @@ function stageGetaway(state) {
   state.alarm.value = 86;
 }
 
-const SCENES = { cover: stageCover, sneak: stageSneak, camera: stageCamera, getaway: stageGetaway };
+// The title screen itself, for a visual check of the first thing a
+// player (and the judge, on the game's own page) sees.
+function stageTitle(state) {
+  state.time = 0;
+  state.screen = 'title';
+}
+
+// The Crown Room at its most dramatic: the thief crossing the richest
+// room, a guard's cone sweeping the crown's pedestal, a camera watching
+// from the far wall.
+function stageCrown(state) {
+  state.time = 18.0;
+  const thiefAt = place(state, 14, 10);
+  state.thief.x = thiefAt.x;
+  state.thief.y = thiefAt.y;
+  state.thief.sneaking = true;
+  state.thief.facing = angleTo(thiefAt.x, thiefAt.y, state.levelDef.loot[0].x, state.levelDef.loot[0].y);
+  const guard = state.guards[0];
+  const guardAt = place(state, 10, 8);
+  guard.x = guardAt.x;
+  guard.y = guardAt.y;
+  guard.state = 'stare';
+  guard.suspicion = 48;
+  aimGuardAt(guard, thiefAt.x, thiefAt.y);
+  const guard2 = state.guards[1];
+  const guard2At = place(state, 22, 13);
+  guard2.x = guard2At.x;
+  guard2.y = guard2At.y;
+  guard2.facing = Math.PI;
+  aimCameraAt(state.cameras[1], thiefAt.x, thiefAt.y);
+  state.alarm.value = 45;
+}
+
+const SCENES = { cover: stageCover, sneak: stageSneak, camera: stageCamera, getaway: stageGetaway, title: stageTitle, crown: stageCrown };
 
 export function stageShot(state, name) {
   const stage = SCENES[name];
