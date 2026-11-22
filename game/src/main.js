@@ -201,7 +201,7 @@ function main() {
 
   if (shot) {
     // Screenshot mode: stage one fixed scene and render it once.
-    const levelIndex = shot === 'camera' || shot === 'getaway' ? 1 : 0;
+    const levelIndex = shot === 'camera' || shot === 'getaway' ? 1 : shot === 'crown' ? 2 : 0;
     startLevel(state, levelIndex);
     stageShot(state, shot);
     render(ctx, state);
